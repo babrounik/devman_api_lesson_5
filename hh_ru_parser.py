@@ -1,42 +1,11 @@
 import requests
-
-url = "https://api.hh.ru/vacancies"
-payload_moskow = {"area": 1}
-response_moskow_raw = requests.get(url, params=payload_moskow)
-response_moskow_raw.raise_for_status()
-response_moskow = response_moskow_raw.json()
-print(f"Moskow all: {response_moskow['found']}")
-
-payload_moskow_30 = {"area": 1, "period": 30}
-response_moskow_30_raw = requests.get(url, params=payload_moskow_30)
-response_moskow_30_raw.raise_for_status()
-response_moskow_30 = response_moskow_30_raw.json()
-print(f"Moskow last 30 days: {response_moskow_30['found']}")
-
-url = "https://api.hh.ru/vacancies"
-
-programming_languages = [
-    "JavaScript",
-    "Java",
-    "Python",
-    "Ruby",
-    "PHP",
-    "C++",
-    "C#",
-    "C",
-    "Go",
-    "Objective-C"
-]
-
-for language in programming_languages:
-    payload = {"area": 1, "text": f"программист {language}", "search_field": "name"}
-    response_raw = requests.get(url, params=payload)
-    response_raw.raise_for_status()
-    response = response_raw.json()
-    print(f"{language}: {response['found']}")
+from pprint import pprint
 
 
-def predict_rub_salary(salary):
+def predict_rub_salary(vacancy):
+    salary = vacancy["salary"]
+    if not salary:
+        return
     currency = salary["currency"]
     if currency != 'RUR':
         return
@@ -50,13 +19,36 @@ def predict_rub_salary(salary):
         return to_salary * 0.8
 
 
-payload = {"area": 1, "text": f"программист python", "search_field": "name"}
-response_raw = requests.get(url, params=payload)
-response_raw.raise_for_status()
-response = response_raw.json()
+url = "https://api.hh.ru/vacancies"
 
-for vacancy in response["items"]:
-    salary = vacancy["salary"]
-    print(salary)
-    print(predict_rub_salary(salary))
-    print("-" * 20)
+programming_languages = [
+    "JavaScript",
+    "Java",
+    "Python",
+    "Ruby",
+    "PHP",
+    "C++",
+    "C#",
+    "C",
+    "Go"
+]
+
+lang_stats = {}
+
+for language in programming_languages:
+    payload = {"area": 1, "text": f"программист {language}", "search_field": "name"}
+    response_raw = requests.get(url, params=payload)
+    response_raw.raise_for_status()
+    response = response_raw.json()
+
+    salaries = []
+    for vacancy in response["items"]:
+        rub_salary = predict_rub_salary(vacancy)
+        if rub_salary:
+            salaries.append(rub_salary)
+    lang_stats[language] = {
+        "vacancies_found": response['found'],
+        "vacancies_processed": len(salaries),
+        "average_salary": int(sum(salaries) / len(salaries))
+    }
+pprint(lang_stats)
