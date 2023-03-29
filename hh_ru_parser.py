@@ -34,3 +34,11 @@ for language in programming_languages:
     response_raw.raise_for_status()
     response = response_raw.json()
     print(f"{language}: {response['found']}")
+
+payload = {"area": 1, "text": f"программист python", "search_field": "name"}
+response_raw = requests.get(url, params=payload)
+response_raw.raise_for_status()
+response = response_raw.json()
+
+for vacancy in response["items"]:
+    print(vacancy["salary"])
