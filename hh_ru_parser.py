@@ -35,10 +35,28 @@ for language in programming_languages:
     response = response_raw.json()
     print(f"{language}: {response['found']}")
 
+
+def predict_rub_salary(salary):
+    currency = salary["currency"]
+    if currency != 'RUR':
+        return
+    from_salary = salary["from"]
+    to_salary = salary["to"]
+    if from_salary and to_salary:
+        return (from_salary + to_salary) / 2
+    if from_salary:
+        return from_salary * 1.2
+    if to_salary:
+        return to_salary * 0.8
+
+
 payload = {"area": 1, "text": f"программист python", "search_field": "name"}
 response_raw = requests.get(url, params=payload)
 response_raw.raise_for_status()
 response = response_raw.json()
 
 for vacancy in response["items"]:
-    print(vacancy["salary"])
+    salary = vacancy["salary"]
+    print(salary)
+    print(predict_rub_salary(salary))
+    print("-" * 20)
