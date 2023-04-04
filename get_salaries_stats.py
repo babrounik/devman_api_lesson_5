@@ -1,0 +1,26 @@
+import hh_ru_parser as hh
+from terminaltables import AsciiTable
+
+
+def main():
+    programming_languages = [
+        "JavaScript",
+        "Java",
+        "Python",
+        "Ruby",
+        "PHP",
+        "C++",
+        "C#",
+        "C",
+        "Go"
+    ]
+    hh_title = 'Headhunter Moskow'
+    hh_lang_stats = hh.get_moskow_languages_stats(programming_languages)
+    hh_table_data = hh.transform_dict_to_tuple(hh_lang_stats)
+    hh_table_instance = AsciiTable(hh_table_data, hh_title)
+    hh_table_instance.justify_columns = {0: 'left', 1: 'right', 2: 'right', 3: 'right'}
+    print(hh_table_instance.table)
+
+
+if __name__ == '__main__':
+    main()
