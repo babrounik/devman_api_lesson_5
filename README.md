@@ -1,6 +1,7 @@
 # Receive info about salaries in mosсow
 
-This script receives data about salaries in mosсow via API requests to hh.ru website. Than it processes it and format to
+This script receives data about salaries in mosсow via API requests to [hh.ru](https://hh.ru/) website. Than it
+processes it and format to
 a good-looking table.
 
 ## How to set up environment
