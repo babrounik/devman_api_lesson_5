@@ -58,9 +58,9 @@ def get_mosсow_languages_stats(programming_languages):
 
     for language in programming_languages:
         payload = {"area": MOSCOW, "text": f"программист {language}", "search_field": "name"}
-        response_raw = requests.get(url, params=payload)
-        response_raw.raise_for_status()
-        response = response_raw.json()
+        raw_response = requests.get(url, params=payload)
+        raw_response.raise_for_status()
+        response = raw_response.json()
 
         salaries = []
         for vacancy in response["items"]:
