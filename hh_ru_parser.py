@@ -1,5 +1,7 @@
 import requests
 
+MOSCOW = 1
+
 
 def getAreas():
     """
@@ -55,7 +57,7 @@ def get_mosсow_languages_stats(programming_languages):
     lang_stats = {}
 
     for language in programming_languages:
-        payload = {"area": 1, "text": f"программист {language}", "search_field": "name"}
+        payload = {"area": MOSCOW, "text": f"программист {language}", "search_field": "name"}
         response_raw = requests.get(url, params=payload)
         response_raw.raise_for_status()
         response = response_raw.json()
