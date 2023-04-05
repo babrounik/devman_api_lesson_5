@@ -16,8 +16,8 @@ def main():
     ]
     hh_title = 'Headhunter Mosсow'
     hh_lang_stats = hh.get_mosсow_languages_stats(programming_languages)
-    hh_table_data = hh.transform_dict_to_tuple(hh_lang_stats)
-    hh_table_instance = AsciiTable(hh_table_data, hh_title)
+    hh_table_lines = hh.transform_dict_to_tuple(hh_lang_stats)
+    hh_table_instance = AsciiTable(hh_table_lines, hh_title)
     hh_table_instance.justify_columns = {0: 'left', 1: 'right', 2: 'right', 3: 'right'}
     print(hh_table_instance.table)
 
