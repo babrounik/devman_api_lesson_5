@@ -50,7 +50,7 @@ def transform_dict_to_tuple(lang_stats):
     return stats_tuples
 
 
-def get_moskow_languages_stats(programming_languages):
+def get_mosсow_languages_stats(programming_languages):
     url = "https://api.hh.ru/vacancies"
     lang_stats = {}
 
