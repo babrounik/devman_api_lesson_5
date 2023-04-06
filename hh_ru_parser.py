@@ -67,9 +67,14 @@ def get_mosсow_languages_stats(programming_languages):
             rub_salary = predict_rub_salary(vacancy)
             if rub_salary:
                 salaries.append(rub_salary)
+        try:
+            average_salary = int(sum(salaries) / len(salaries))
+        except ZeroDivisionError:
+            average_salary = 'NA'
+
         lang_stats[language] = {
             "vacancies_found": response['found'],
             "vacancies_processed": len(salaries),
-            "average_salary": int(sum(salaries) / len(salaries))
+            "average_salary": average_salary
         }
     return lang_stats
