@@ -36,11 +36,11 @@ def get_hh_vacancies(_language, _page, _per_page):
     return raw_response.json()
 
 
-def transform_dict_to_tuple(lang_stats):
-    stats_tuples = [("Язык программирования", "Найдено вакансий", "Обработано вакансий", "Средняя зарплата"), ]
+def prepare_data_for_visualisation(lang_stats):
+    columns_names = [("Язык программирования", "Найдено вакансий", "Обработано вакансий", "Средняя зарплата"), ]
     for lang, stats in lang_stats.items():
-        stats_tuples.append((lang, stats['vacancies_found'], stats['vacancies_processed'], stats['average_salary']))
-    return stats_tuples
+        columns_names.append((lang, stats['vacancies_found'], stats['vacancies_processed'], stats['average_salary']))
+    return columns_names
 
 
 def get_mosсow_languages_stats(programming_languages):
