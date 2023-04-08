@@ -1,6 +1,8 @@
 import requests
 
 MOSCOW = 1
+VACANCIES_PARSING_LIMIT = 2000
+PER_PAGE = 100
 
 
 def getAreas():
@@ -45,6 +47,20 @@ def predict_rub_salary(vacancy):
         return to_salary * 0.8
 
 
+def get_hh_vacancies(_language, _page, _per_page):
+    _url = "https://api.hh.ru/vacancies"
+    payload = {"area": MOSCOW,
+               "text": f"программист {_language}",
+               "search_field": "name",
+               "page": _page,
+               "per_page": _per_page}
+
+    raw_response = requests.get(_url, params=payload)
+    raw_response.raise_for_status()
+
+    return raw_response.json()
+
+
 def transform_dict_to_tuple(lang_stats):
     stats_tuples = [("Язык программирования", "Найдено вакансий", "Обработано вакансий", "Средняя зарплата"), ]
     for lang, stats in lang_stats.items():
@@ -53,20 +69,29 @@ def transform_dict_to_tuple(lang_stats):
 
 
 def get_mosсow_languages_stats(programming_languages):
-    url = "https://api.hh.ru/vacancies"
     lang_stats = {}
 
     for language in programming_languages:
-        payload = {"area": MOSCOW, "text": f"программист {language}", "search_field": "name"}
-        raw_response = requests.get(url, params=payload)
-        raw_response.raise_for_status()
-        response = raw_response.json()
+        page = 0
+        pages_limit = VACANCIES_PARSING_LIMIT // PER_PAGE
+
+        response = get_hh_vacancies(language, page, PER_PAGE)
+
+        all_vacancies = response['found']
+        pages_without_limit = all_vacancies // PER_PAGE + 1
+        max_page = pages_without_limit if pages_without_limit <= pages_limit else pages_limit
 
         salaries = []
         for vacancy in response["items"]:
             rub_salary = predict_rub_salary(vacancy)
             if rub_salary:
                 salaries.append(rub_salary)
+        for page_num in range(1, max_page):
+            response = get_hh_vacancies(language, page_num, PER_PAGE)
+            for vacancy in response["items"]:
+                rub_salary = predict_rub_salary(vacancy)
+                if rub_salary:
+                    salaries.append(rub_salary)
         try:
             average_salary = int(sum(salaries) / len(salaries))
         except ZeroDivisionError:
